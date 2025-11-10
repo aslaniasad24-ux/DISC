@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>آزمون DISC</title>
+<style>
+  body {font-family:Tahoma;background:#f8faff;direction:rtl;padding:20px;}
+  #disc-test {max-width:800px;margin:auto;background:white;border:2px solid #0b3d91;border-radius:12px;padding:20px;}
+  h2 {text-align:center;color:#0b3d91;}
+  button {background:#ffcc00;color:#0b3d91;border:none;padding:10px 20px;border-radius:8px;margin-top:15px;cursor:pointer;}
+  .question {margin:15px 0;padding:10px;border:1px solid #0b3d91;border-radius:8px;background:#f5f5f5;}
+  #result {display:none;margin-top:20px;background:#e6f2ff;padding:15px;border:1px solid #0b3d91;border-radius:8px;}
+</style>
+</head>
+<body>
+<div id="disc-test">
+  <h2>آزمون شخصیت‌شناسی DISC</h2>
+  <form id="discForm">
+    <div id="questionsContainer"></div>
+    <button type="submit">نمایش نتیجه</button>
+  </form>
+  <div id="result">
+    <h3>نتیجه شما:</h3>
+    <p id="resultText"></p>
+    <p id="scoreBox"></p>
+  </div>
+</div>
+
+<script>
+const questions = [
+  { q:"در یک جمع دوستانه، چگونه رفتار می‌کنید؟", options:{D:"رهبری می‌کنم",I:"با همه ارتباط دارم",S:"ساکت و شنونده",C:"تحلیل‌گر هستم"} },
+  { q:"در تصمیم‌گیری‌های مهم چگونه عمل می‌کنید؟", options:{D:"سریع و قاطع",I:"با مشورت",S:"با آرامش",C:"با تحلیل دقیق"} },
+  { q:"در کار گروهی ترجیح می‌دهید؟", options:{D:"رهبر باشید",I:"همراه اجتماعی",S:"پشتیبان تیم",C:"تحلیل‌گر"} },
+  { q:"چقدر به جزئیات اهمیت می‌دهید؟", options:{D:"کم",I:"متوسط",S:"زیاد",C:"خیلی زیاد"} },
+  { q:"در شرایط فشار چطور عمل می‌کنید؟", options:{D:"فعال و سریع",I:"گفتگو می‌کنم",S:"صبورم",C:"تحلیل می‌کنم"} }
+];
+const cont=document.getElementById("questionsContainer");
+questions.forEach((item,i)=>{
+  let html=`<div class='question'><p>${i+1}. ${item.q}</p>`;
+  for(let k in item.options){
+    html += `<label style='display:block;margin:5px 0;'><input type='radio' name='q${i}' value='${k}' required> ${item.options[k]}</label>`;
+  }
+  html += "</div>";
+  cont.innerHTML += html;
+});
+document.getElementById("discForm").onsubmit=function(e){
+  e.preventDefault();
+  const data=new FormData(this);
+  const scores={D:0,I:0,S:0,C:0};
+  for(let [k,v] of data.entries()){ scores[v]++; }
+  const total=Object.values(scores).reduce((a,b)=>a+b,0);
+  const perc={D:(scores.D/total*100).toFixed(1),I:(scores.I/total*100).toFixed(1),S:(scores.S/total*100).toFixed(1),C:(scores.C/total*100).toFixed(1)};
+  let max=Object.keys(scores).reduce((a,b)=>scores[a]>scores[b]?a:b);
+  const desc={D:"قاطع و رهبر",I:"اجتماعی و پرانرژی",S:"صبور و آرام",C:"دقیق و منطقی"};
+  document.getElementById("resultText").innerText="تیپ اصلی شما: "+desc[max];
+  document.getElementById("scoreBox").innerText=`D:${perc.D}% | I:${perc.I}% | S:${perc.S}% | C:${perc.C}%`;
+  document.getElementById("result").style.display="block";
+};
+</script>
+</body>
+</html>
